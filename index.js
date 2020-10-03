@@ -5,8 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const squares = document.querySelectorAll('.container div')
     const choises = document.querySelector('.choises')
     const check = document.querySelector('.check')
+    const uploadButton = document.querySelector('.uploadButton')
     const buttons = document.querySelectorAll('.choises div')
     const checkButton = document.querySelector('.checkButton')
+    const input = document.getElementById('file-input')
 
     var randomFive = []
 
@@ -68,29 +70,81 @@ document.addEventListener('DOMContentLoaded', () => {
         control === 24 ? alert('YO YO YO SOME MEMORY YOU GOT THERE BRUV!!!') : alert('YOU FUCKED UP YO')
     }
 
+
+
     checkButton.addEventListener('click', () => checkPhrases())
+    uploadButton.addEventListener('click', () => input.click())
+
+    input.onchange = function () {
+        var reader = new FileReader();
+        reader.onload = async function () {     
+            var text = reader.result;
+            var lines = await text.split(/[\r\n]+/g)
+            var index = 0
+            for (let i = 96; i < lines.length; i +=12) {
+                // if (lines[i].includes('Tj')) {
+                    console.log(i + " " + lines[i].split('(')[1].split(')')[0])   //HAHAHAAHAHAH :(
+                    squares[index].innerHTML = lines[i].split('(')[1].split(')')[0]
+                    index++
+                // }
+            }
+        }
+        reader.readAsText( e.target.files[0], "UTF-8");
+    }
 
     function initial() {
         for (let i = 0; i < phrases.length; i++) {
             squares[i].innerHTML = phrases[i]
         }
-        const initialNav = document.createElement('div')
-        const initialButton = document.createElement('div')
 
+        const initialNav = document.createElement('div')
+        const downloadButton = document.createElement('div')
+        const testButton = document.createElement('div')
+
+        downloadButton.classList.add('downloadButton')
+        testButton.classList.add('testButton')
+
+        initialNav.appendChild(downloadButton)
+        initialNav.appendChild(testButton)
+        downloadButton.innerHTML = 'Download PDF'
+        testButton.innerHTML = 'Ready'
 
         initialNav.classList.add('initialNav')
         body.appendChild(initialNav)
 
-        initialButton.classList.add('initialButton')
-        initialNav.appendChild(initialButton)
-        initialButton.innerHTML = 'I AM READY'
+        downloadButton.addEventListener('click', () => {
+            var firstRow = []
+            var secondRow = []
+            var thirdRow = []
+            var fourthRow = []
 
-        initialButton.addEventListener('click', () => {
+            phrases.map((phrase, i) => {
+                if (i < 6) firstRow.push(phrase)
+                else if (i < 12) secondRow.push(phrase)
+                else if (i < 18) thirdRow.push(phrase)
+                else if (i < 24) fourthRow.push(phrase)
+            })
+
+            var doc = new jsPDF({
+                orientation: "landscape",
+                unit: "in",
+                format: [8, 3]
+            })
+
+            doc.autoTable({
+                head: [['', '', '', '', '', '']],
+                body: [firstRow, secondRow, thirdRow, fourthRow]
+            })
+
+            doc.save('a4.pdf')
+        })
+
+        testButton.addEventListener('click', () => {
             container.style.display = "none"
             showPhrases()
             initialNav.style.display = "none"
             choises.style.display = "flex"
-            check.style.display = "grid"
+            check.style.display = "flex"
 
         })
     }
@@ -100,9 +154,4 @@ document.addEventListener('DOMContentLoaded', () => {
     chooseRandom()
     showRandom()
     createButtons()
-
-
-
-
-
 })
