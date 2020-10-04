@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < squares.length; i++) {
             squares[i].innerHTML === phrases[i] ? control++ : null
         }
-        control === 24 ? alert('YO YO YO SOME MEMORY YOU GOT THERE BRUV!!!') : alert('YOU FUCKED UP YO')
+        control === 24 ? alert('Correct!') : alert('Wrong!')
     }
 
 
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkButton.addEventListener('click', () => checkPhrases())
     uploadButton.addEventListener('click', () => input.click())
 
-    input.onchange = function () {
+    input.onchange = function (e) {
         var reader = new FileReader();
         reader.onload = async function () {     
             var text = reader.result;
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: [firstRow, secondRow, thirdRow, fourthRow]
             })
 
-            doc.save('a4.pdf')
+            doc.save('phrases.pdf')
         })
 
         testButton.addEventListener('click', () => {
